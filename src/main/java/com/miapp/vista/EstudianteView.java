@@ -125,15 +125,33 @@ public class EstudianteView extends JFrame {
     // ── Eventos ───────────────────────────────────────────────────────────────
 
     private void initEventos() {
-        btnBuscar.addActionListener((ActionEvent e) -> {
-            if (controlador != null) {
-                controlador.buscarEstudiante(txtNombre.getText().trim());
-            }
-        });
 
-        // También buscar al presionar Enter en el campo de texto
-        txtNombre.addActionListener((ActionEvent e) -> btnBuscar.doClick());
-    }
+    btnBuscar.addActionListener((ActionEvent e) -> {
+        if (controlador != null) {
+            controlador.buscarEstudiante(txtNombre.getText().trim());
+        }
+    });
+
+    txtNombre.addActionListener((ActionEvent e) -> btnBuscar.doClick());
+
+
+    btnagregar.addActionListener((ActionEvent e) -> {
+
+        String nombre = nombreagregar.getText().trim();
+        String carrera = carreraagregar.getText().trim();
+
+        try {
+            double promedio = Double.parseDouble(promedioagregar.getText().trim());
+
+            if (controlador != null) {
+                controlador.agregarEstudiante(nombre, carrera, promedio);
+            }
+
+        } catch (NumberFormatException ex) {
+            mostrarError("El promedio debe ser un número válido.");
+        }
+    });
+}
 
     // ── Métodos públicos que llama el Controlador ─────────────────────────────
     // ninguno de estos métodos recibe un Estudiante: reciben
@@ -173,6 +191,15 @@ public class EstudianteView extends JFrame {
         JOptionPane.showMessageDialog(this, mensaje, "Error", JOptionPane.ERROR_MESSAGE);
         setEstado("Error: " + mensaje);
     }
+    
+    public void mostrarConfirmacion(String mensaje) {
+    JOptionPane.showMessageDialog(
+        this,
+        mensaje,
+        "Estudiante agregado",
+        JOptionPane.INFORMATION_MESSAGE
+    );
+}
 
     /**
      * Devuelve el texto ingresado en el campo de nombre.
