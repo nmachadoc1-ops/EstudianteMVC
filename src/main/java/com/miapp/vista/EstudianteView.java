@@ -59,6 +59,8 @@ public class EstudianteView extends JFrame {
         panelBusqueda.add(lblNombre);
         panelBusqueda.add(txtNombre);
         panelBusqueda.add(btnBuscar);
+        
+        JPaneo
 
         // Panel central — tabla de resultados
         String[] columnas = {"ID", "Nombre", "Carrera", "Promedio"};
