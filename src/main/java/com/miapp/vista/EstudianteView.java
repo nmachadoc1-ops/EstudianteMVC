@@ -32,6 +32,9 @@ public class EstudianteView extends JFrame {
     private JTextField             promedioagregar;
     
     private JButton                btnagregar;
+    
+    private JComboBox<String> comboCriterio;
+    private JButton btnOrdenar;
    
     
 
@@ -91,11 +94,34 @@ public class EstudianteView extends JFrame {
         panelAgregar.add(lblpromedio);
         panelAgregar.add(promedioagregar);
         panelAgregar.add(btnagregar);
+        
+        //panel de ordenar 
+        JPanel panelOrdenar= new JPanel (new FlowLayout(FlowLayout.LEFT,10,10));
+        panelOrdenar.setBorder(BorderFactory.createTitledBorder("Ordenar resultados"));
+        
+        JLabel lblCriterio = new JLabel("Criterio: ");
+        
+        comboCriterio = new JComboBox<>(
+        new String[]{"Nombre", "Promedio"}
+);
+        btnOrdenar = new JButton("Ordenar");
+        
+        btnOrdenar.setBackground(new Color(59, 139, 212));
+        btnOrdenar.setForeground(Color.WHITE);
+        btnOrdenar.setFocusPainted(false);
+        
+        panelOrdenar.add(lblCriterio);
+        panelOrdenar.add(comboCriterio);
+        panelOrdenar.add(btnOrdenar);
+        
+        
+        
        
         JPanel panelSuperior=new JPanel();
         panelSuperior.setLayout(new BoxLayout(panelSuperior, BoxLayout.Y_AXIS));
         panelSuperior.add(panelBusqueda);
         panelSuperior.add(panelAgregar);
+        panelSuperior.add(panelOrdenar);
        
 
         // Panel central — tabla de resultados
@@ -124,7 +150,7 @@ public class EstudianteView extends JFrame {
 
     // ── Eventos ───────────────────────────────────────────────────────────────
 
-    private void initEventos() {
+    private void initEventos(){
 
     btnBuscar.addActionListener((ActionEvent e) -> {
         if (controlador != null) {
@@ -149,6 +175,14 @@ public class EstudianteView extends JFrame {
 
         } catch (NumberFormatException ex) {
             mostrarError("El promedio debe ser un número válido.");
+        }
+    });
+        btnOrdenar.addActionListener((ActionEvent e) -> {
+
+        String criterio = (String) comboCriterio.getSelectedItem();
+
+        if (controlador != null) {
+            controlador.ordenarPor(criterio);
         }
     });
 }
@@ -199,7 +233,7 @@ public class EstudianteView extends JFrame {
         "Estudiante agregado",
         JOptionPane.INFORMATION_MESSAGE
     );
-}
+}                                                                                                                                                               
 
     /**
      * Devuelve el texto ingresado en el campo de nombre.

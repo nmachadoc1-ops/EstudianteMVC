@@ -5,6 +5,7 @@ import com.miapp.vista.EstudianteView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 /**
  * Controlador: gestiona la lógica entre la Vista y el Modelo.
@@ -23,6 +24,8 @@ public class EstudianteController {
 
     // ── Array de estudiantes (fuente de datos) ────────────────────────────────
     private ArrayList<Estudiante> estudiantes;
+    private List<Estudiante> ultimosResultados;
+    private boolean ordenAscendente = true;
 
     // ── Constructor ───────────────────────────────────────────────────────────
 
@@ -53,9 +56,12 @@ public class EstudianteController {
             estudiantes.add(new Estudiante(9,  "Sofía Díaz",        "Ingeniería Civil",       4.6));
             estudiantes.add(new Estudiante(10, "Juliana Morales",   "Medicina",               4.8));
             estudiantes.add(new Estudiante(11, "Ana Milena Ruiz",   "Derecho",                4.0));
-            estudiantes.add(new Estudiante(12, "Carlos Andrés Paz", "Administración",         3.6));
+            estudiantes.add(new Estudiante(12, "Carlos André                                                                                                    s Paz", "Administración",         3.6));
 
         }
+    
+    
+    
    
 
     // ── Lógica de búsqueda ────────────────────────────────────────────────────
@@ -64,65 +70,105 @@ public class EstudianteController {
      * Busca estudiantes cuyo nombre contenga el criterio (sin distinción de mayúsculas).
      * Luego llama a vista.mostrarEstudiante(fila) para una coincidencia,
      * o a vista.mostrarEstudiantes(filas) cuando hay varias.
-     *
-     * @param criterio texto ingresado por el usuario en la Vista
-     */
-    public void buscarEstudiante(String criterio) {
+        *
+        * @param criterio texto ingresado por el usuario en la Vista
+        */
+       public void buscarEstudiante(String criterio) {
 
-        // Validación básica
-        if (criterio == null || criterio.isEmpty()) {
-            vista.mostrarError("Por favor ingrese un nombre para buscar.");
-            return;
-        }
+           // Validación básica
+           if (criterio == null || criterio.isEmpty()) {
+               vista.mostrarError("Por favor ingrese un nombre para buscar.");
+               return;
+           }
 
-        List<Estudiante> resultados = new ArrayList<>();
-        String criterioBajo = criterio.toLowerCase();
+           List<Estudiante> resultados = new ArrayList<>();
+           String criterioBajo = criterio.toLowerCase();
 
-        for (Estudiante e : estudiantes) {
-            if (e.getNombre().toLowerCase().contains(criterioBajo)) {
-                resultados.add(e);
-            }
-        }
+           for (Estudiante e : estudiantes) {
+               if (e.getNombre().toLowerCase().contains(criterioBajo)) {
+                   resultados.add(e);
+               }
+           }
+           
+           ultimosResultados = new ArrayList<>(resultados);
 
-        if (resultados.isEmpty()) {
-            vista.mostrarEstudiantes(new ArrayList<>()); // mostrará mensaje vacío
-        } else if (resultados.size() == 1) {
-            // Un solo resultado: se convierte a fila y se usa vista.mostrarEstudiante(fila)
-            vista.mostrarEstudiante(convertirAFila(resultados.get(0)));
-        } else {
-            // Varios resultados: se convierte toda la lista antes de enviarla a la Vista
-            vista.mostrarEstudiantes(convertirAFilas(resultados));
-        }
-    }
-    
-    public void agregarEstudiante(String nombre, String carrera, double promedio){
-        if(nombre == null || nombre.isEmpty()) {
-        vista.mostrarError("El nombre no puede estar vacío.");
+           if (resultados.isEmpty()) {
+               vista.mostrarEstudiantes(new ArrayList<>()); // mostrará mensaje vacío
+           } else if (resultados.size() == 1) {
+               // Un solo resultado: se convierte a fila y se usa vista.mostrarEstudiante(fila)
+               vista.mostrarEstudiante(convertirAFila(resultados.get(0)));
+           } else {
+               // Varios resultados: se convierte toda la lista antes de enviarla a la Vista
+               vista.mostrarEstudiantes(convertirAFilas(resultados));
+           }
+           
+           
+           
+       }
+       
+       public void ordenarPor(String criterio) {
+
+    if (ultimosResultados == null || ultimosResultados.isEmpty()) {
+        vista.mostrarError("No hay resultados para ordenar.");
         return;
-    } 
-         if (promedio < 0.0 || promedio > 5.0) {
-        vista.mostrarError("El promedio debe estar entre 0.0 y 5.0.");
-        return;
     }
-          int nuevoId = estudiantes.size() + 1;
 
-    Estudiante nuevoEstudiante = new Estudiante(
-        nuevoId,
-        nombre,
-        carrera,
-        promedio
+    Comparator<Estudiante> comparador;
+
+    if (criterio.equals("Nombre")) {
+
+        comparador = Comparator.comparing(
+            Estudiante::getNombre
+        );
+
+    } else {
+
+        comparador = Comparator.comparingDouble(
+            Estudiante::getPromedio
+        );
+    }
+
+    if (!ordenAscendente) {
+        comparador = comparador.reversed();
+    }
+
+    ultimosResultados.sort(comparador);
+
+    ordenAscendente = !ordenAscendente;
+
+    vista.mostrarEstudiantes(
+        convertirAFilas(ultimosResultados)
     );
-
-    // Agregarlo a la colección
-    estudiantes.add(nuevoEstudiante);
-
-    // Mostrar confirmación
-    vista.mostrarConfirmacion("Estudiante agregado correctamente.");
-
-    // Mostrar nuevamente todos los estudiantes
-    vista.mostrarEstudiantes(convertirAFilas(estudiantes));
 }
- 
+
+       public void agregarEstudiante(String nombre, String carrera, double promedio){
+           if(nombre == null || nombre.isEmpty()) {
+           vista.mostrarError("El nombre no puede estar vacío.");
+           return;
+       } 
+            if (promedio < 0.0 || promedio > 5.0) {
+           vista.mostrarError("El promedio debe estar entre 0.0 y 5.0.");
+           return;
+       }
+             int nuevoId = estudiantes.size() + 1;
+
+       Estudiante nuevoEstudiante = new Estudiante(
+           nuevoId,
+           nombre,
+           carrera,
+           promedio
+       );
+
+       // Agregarlo a la colección
+       estudiantes.add(nuevoEstudiante);
+
+       // Mostrar confirmación
+       vista.mostrarConfirmacion("Estudiante agregado correctamente.");
+
+       // Mostrar nuevamente todos los estudiantes
+       vista.mostrarEstudiantes(convertirAFilas(estudiantes));
+   }
+
     
     
 
