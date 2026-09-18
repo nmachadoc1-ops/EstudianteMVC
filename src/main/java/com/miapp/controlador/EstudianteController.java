@@ -161,6 +161,8 @@ public class EstudianteController {
 
        // Agregarlo a la colección
        estudiantes.add(nuevoEstudiante);
+       
+       ultimosResultados = new ArrayList<>(estudiantes);
 
        // Mostrar confirmación
        vista.mostrarConfirmacion("Estudiante agregado correctamente.");
@@ -168,6 +170,15 @@ public class EstudianteController {
        // Mostrar nuevamente todos los estudiantes
        vista.mostrarEstudiantes(convertirAFilas(estudiantes));
    }
+       
+       public void mostrarTodos() {
+
+        ultimosResultados = new ArrayList<>(estudiantes);
+
+        vista.mostrarEstudiantes(
+            convertirAFilas(ultimosResultados)
+    );
+}
 
     
     

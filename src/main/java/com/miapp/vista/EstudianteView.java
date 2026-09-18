@@ -35,7 +35,7 @@ public class EstudianteView extends JFrame {
     
     private JComboBox<String> comboCriterio;
     private JButton btnOrdenar;
-   
+    private JButton btnMostrarTodos;
     
 
     // ── Controlador ───────────────────────────────────────────────────────────
@@ -67,10 +67,15 @@ public class EstudianteView extends JFrame {
         btnBuscar.setBackground(new Color(59, 139, 212));
         btnBuscar.setForeground(Color.WHITE);
         btnBuscar.setFocusPainted(false);
+        btnMostrarTodos = new JButton("Mostrar Todos");
+        btnMostrarTodos.setBackground(Color.WHITE);
+        btnMostrarTodos.setForeground(Color.BLACK);
+        btnMostrarTodos.setFocusPainted(false);
 
         panelBusqueda.add(lblNombre);
         panelBusqueda.add(txtNombre);
         panelBusqueda.add(btnBuscar);
+        panelBusqueda.add(btnMostrarTodos);
         
         
         //PANEL DE AGREGAR
@@ -151,6 +156,13 @@ public class EstudianteView extends JFrame {
     // ── Eventos ───────────────────────────────────────────────────────────────
 
     private void initEventos(){
+        
+    btnMostrarTodos.addActionListener((ActionEvent e) -> {
+
+    if (controlador != null) {
+        controlador.mostrarTodos();
+    }
+});
 
     btnBuscar.addActionListener((ActionEvent e) -> {
         if (controlador != null) {
